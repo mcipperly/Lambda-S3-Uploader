@@ -2,7 +2,7 @@
 
 var AWS = require('aws-sdk');
 
-var s3Bucket = new AWS.S3( { params: {Bucket: 'BUCKET-NAME-HERE'} } );
+var s3Bucket = new AWS.S3( { params: {Bucket: 'BUCKET_NAME_HERE'} } );
 
 exports.handler = (event, context, callback) => { 
   var fileContents = new Buffer(event.contents.substr(event.contents.indexOf(',')), 'base64');
