@@ -3,6 +3,7 @@
   'use strict';
 
   var aws_endpoint = "YOUR_AMAZON_ENDPOINT_HERE";
+  var require_pass = 0;
   var all_files = [];
   var current_file_id = 0;
   var locked = false;
@@ -50,22 +51,34 @@
   };
 
   var handleReaderLoad = function (evt) {
-
-    var current_file = {
-      name: all_files[current_file_id].name,
-      type: all_files[current_file_id].type,
-      contents: evt.target.result
-    };
-
+    if(require_pass) {
+      var current_file = {
+        name: all_files[current_file_id].name,
+        type: all_files[current_file_id].type,
+        contents: evt.target.result,
+        passphrase: document.getElementById('passphrase_input').value
+      };
+    } else {
+      var current_file = {
+        name: all_files[current_file_id].name,
+        type: all_files[current_file_id].type,
+        contents: evt.target.result
+      };
+    }
     var xhr = new XMLHttpRequest();
     xhr.open('POST', aws_endpoint, true);
     xhr.onreadystatechange = function () {
       if ( xhr.readyState == 4 ) {
         if ( document.getElementById('file-' + current_file_id) ) {
-          if ( xhr.status === 200 ) {
-            document.getElementById('file-' + current_file_id).querySelector('.progress').innerHTML = 'Uploaded';
-          } else {
-            document.getElementById('file-' + current_file_id).querySelector('.progress').innerHTML = 'Failed';
+          switch(xhr.status) {
+            case 200:
+              document.getElementById('file-' + current_file_id).querySelector('.progress').innerHTML = 'Uploaded';
+              break;
+            case 403:
+              document.getElementById('file-' + current_file_id).querySelector('.progress').innerHTML = 'Bad Passphrase';
+              break;
+            default:
+              document.getElementById('file-' + current_file_id).querySelector('.progress').innerHTML = 'Failed';
           }
         }
         all_files[current_file_id] = 1;
@@ -109,5 +122,8 @@
 
   var addFile = document.getElementById('addFile');
   addFile.addEventListener('change', handleFileDialog);
+  if(require_pass) {
+    document.getElementById('passphrase').innerHTML = 'Passphrase:<br/><input type="text" name="passphrase" id="passphrase_input" />';
+  }
 
 }(window, window.document));
