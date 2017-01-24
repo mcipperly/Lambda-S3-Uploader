@@ -2,6 +2,14 @@
 
 This is a script that has a component living in S3 and a component living in Lambda connected via API Gateway
 
++ S3 components 
+  - Provide front-end interface onto which you can drag n' drop files, with an option for password
++ API Gateway component
+  - Maps POST from the S3 component into Lambda-ingestible data stream
++ Lambda component
+  - Takes POSTed data and puts it into specified S3 bucket
+  - Might be worth making the bucket a stage variable passed in from API Gateway if you want to have multiple environments for this
+
 ## Config/Install
 
 1. Create an S3 bucket to store your uploaded files in
