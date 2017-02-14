@@ -9,6 +9,9 @@ This is a script that has a component living in S3 and a component living in Lam
 + Lambda component
   - Takes POSTed data and puts it into specified S3 bucket
   - Might be worth making the bucket a stage variable passed in from API Gateway if you want to have multiple environments for this
+  - There's a few options for handling Content-Type, because S3 does a pretty meh job on autodetecting:
+    * You can use [mime-type](https://www.npmjs.com/package/mime-types) if you feel like packing this up in a zip to upload, simply remove the case statement and replace with mime.lookup
+    * If you have a small set of predictable file types, there's a case statement built in
 
 ## Config/Install
 
