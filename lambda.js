@@ -11,10 +11,31 @@ var s3Bucket = new AWS.S3( { params: {Bucket: 'BUCKET_NAME_HERE'} } );
 exports.handler = (event, context, callback) => {
   if(!uploadPassword || uploadPassword == event.passphrase) {
     var fileContents = new Buffer(event.contents.substr(event.contents.indexOf(',')), 'base64');
+    var ctype = "";
+    switch (event.name.substr(event.name.lastIndexOf('.')+1)) {
+        case "gif":
+            ctype = "image/gif";
+            break;
+        case "jpg":
+            ctype = "image/jpeg";
+            break;
+        case "png":
+            ctype = "image/png";
+            break;
+        case "json":     
+            ctype = "application/json";
+            break;
+        case "js":
+            ctype = "application/javascript";
+            break;
+        default: 
+            ctype = "text/plain";
+    };
     var data = {
       Key: event.name,
       Body: fileContents,
-      ContentEncoding: 'base64'
+      ContentEncoding: 'base64',
+      ContentType: ctype
     };
     s3Bucket.putObject(data, function(err, data){
         if (err) {
